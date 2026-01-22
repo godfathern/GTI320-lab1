@@ -1,0 +1,10 @@
+# CLion et CMake
+.idea/
+cmake-build-*/
+build/
+
+# Fichiers système Mac
+.DS_Store
+
+# Fichiers temporaires Google Test
+_deps/
