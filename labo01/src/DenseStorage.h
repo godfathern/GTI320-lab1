@@ -5,9 +5,9 @@
  *
  * @brief Stockage dense pour des données à taille fixe ou dynamique.
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : BUIP26109708
+ * Email : phan-tung.bui.1@ens.etsmtl.ca
  *
  */
 
