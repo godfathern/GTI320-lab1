@@ -32,7 +32,8 @@ namespace gti320
     private:
 
         // TODO déclarer une variable m_data et allouer la mémoire pour y stocker _Size éléments
-        _Scalar* m_data;  // <-- Ceci n'est pas bon, à modifier
+        // _Scalar* m_data;  // <-- Ceci n'est pas bon, à modifier
+        _Scalar m_data[_Size];
 
     public:
 
@@ -70,6 +71,8 @@ namespace gti320
 
         /**
          * Opérateur de copie
+         * surcharge de l'opérateur d'affectation (operator=).
+         * C'est la fonction qui est appelée when we do monStockage = unAutreStockage;
          */
         DenseStorage& operator=(const DenseStorage& other)
         {
@@ -127,6 +130,7 @@ namespace gti320
 
         /**
          * Accès bracket (pour lecture et écriture)
+         * return a pointeur
          */
         _Scalar& operator[](int i)
         {
@@ -134,6 +138,7 @@ namespace gti320
 
             return m_data[i];
         }
+
     };
 
 
@@ -165,8 +170,11 @@ namespace gti320
         explicit DenseStorage(int _size) : m_data(nullptr), m_size(_size)
         {
             // TODO allouer un tampon pour stocker _size éléments de type _Scalar.
-
+            m_data = new _Scalar[_size];
             // TODO initialiser ce tampon à zéro.
+            memset(m_data, 0, sizeof(_Scalar) * _size);
+
+            
         }
 
         /**
@@ -197,6 +205,7 @@ namespace gti320
         ~DenseStorage()
         {
             // TODO libérer la mémoire allouée
+            delete[] m_data;
 
         }
 
