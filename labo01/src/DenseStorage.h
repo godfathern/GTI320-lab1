@@ -209,7 +209,7 @@ namespace gti320
                 m_size = other.m_size;
                 if (m_size > 0) {
                     m_data = new _Scalar[m_size];
-                    memcpu(m_data, other.m_data, sizeof(_Scalar) * m_size);
+                    memcpy(m_data, other.m_data, sizeof(_Scalar) * m_size);
                 }
                 else {
                     m_data = nullptr;
