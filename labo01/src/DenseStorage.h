@@ -35,6 +35,11 @@ namespace gti320
         // _Scalar* m_data;  // <-- Ceci n'est pas bon, à modifier
         _Scalar m_data[_Size];
 
+    int a = 10;
+    int* pointeur = &a;
+    int cac = * pointeur;
+
+
     public:
 
         /**
@@ -162,12 +167,15 @@ namespace gti320
         /**
          * Constructeur par défaut
          */
-        DenseStorage() : m_data(nullptr), m_size(0) {}
+        DenseStorage() :
+        m_data(nullptr), m_size(0)
+        {}
 
         /**
          * Constructeur avec taille spécifiée
          */
-        explicit DenseStorage(int _size) : m_data(nullptr), m_size(_size)
+        explicit DenseStorage(int _size) :
+        m_data(nullptr), m_size(_size)
         {
             // TODO allouer un tampon pour stocker _size éléments de type _Scalar.
             m_data = new _Scalar[_size];
@@ -185,9 +193,9 @@ namespace gti320
             , m_size(other.m_size)
         {
             // TODO allouer un tampon pour stocker _size éléments de type _Scalar.
-
+            m_data = new _Scalar[m_size];
             // TODO copier other.m_data dans m_data.
-
+            memcpy(m_data, other.m_data, sizeof(_Scalar) * m_size);
         }
 
         /**
@@ -196,6 +204,17 @@ namespace gti320
         DenseStorage& operator=(const DenseStorage& other)
         {
             // TODO implémenter !
+            if (this != &other) {
+                delete[] m_data;
+                m_size = other.m_size;
+                if (m_size > 0) {
+                    m_data = new _Scalar[m_size];
+                    memcpu(m_data, other.m_data, sizeof(_Scalar) * m_size);
+                }
+                else {
+                    m_data = nullptr;
+                }
+            }
             return *this;
         }
 
@@ -205,8 +224,10 @@ namespace gti320
         ~DenseStorage()
         {
             // TODO libérer la mémoire allouée
-            delete[] m_data;
-
+            if (m_data != nullptr) {
+                delete[] m_data;
+                m_data = nullptr;
+            }
         }
 
         /**
@@ -224,6 +245,16 @@ namespace gti320
         void resize(int _size)
         {
             // TODO redimensionner la mémoire allouée
+            if (_size == m_size) return;
+
+            delete [] m_data;
+            m_size = _size;
+            if (m_size > 0) {
+                m_data = new _Scalar[m_size];
+            }
+            else {
+                m_data = nullptr;
+            }
 
         }
 
@@ -233,6 +264,9 @@ namespace gti320
         void setZero()
         {
             // TODO implémenter !
+            if (m_data != nullptr && m_size > 0) {
+                memset(m_data, 0, sizeof(_Scalar)*m_size);
+            }
         }
 
         /**
