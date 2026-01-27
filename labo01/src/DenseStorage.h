@@ -294,7 +294,6 @@ namespace gti320
          */
         _Scalar& operator[](int i) {
             assert(0 <= i && i < m_size);
-
             return m_data[i];
         }
     };
