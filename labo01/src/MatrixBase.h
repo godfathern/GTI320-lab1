@@ -1,13 +1,12 @@
 #pragma once
-
 /**
  * @file MatrixBase.h
  *
  * @brief Classe contenant les éléments de base des matrices et des vecteurs.
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : BUIP26109708
+ * Email : phan-tung.bui.1@ens.etsmlt.ca
  *
  */
 
