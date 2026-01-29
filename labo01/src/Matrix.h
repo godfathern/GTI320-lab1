@@ -71,13 +71,12 @@ namespace gti320
             if (this->rows() != rows || this->cols() != columns) {
                 this->resize(rows, columns);
             }
-
+            //Wtf : no matter what i change here, test still coming out right
             for (int i = 0; i < columns; ++i ) {
                 for (int j = 0; j < rows; ++j) {
-                    (*this)(i, j) = submatrix(i, j);
+                    (*this)(j, i) = submatrix(i, j);
                 }
             }
-
             return *this;
         }
 
@@ -126,10 +125,12 @@ namespace gti320
         Matrix<_OtherScalar, _OtherRows, _OtherCols, _OtherStorage> transpose() const
         {
             // TODO calcule et retourne la transposée de la matrice.
-            Matrix <_OtherScalar,  _OtherRows,  _OtherCols, _OtherStorage> matrixT(this->cols(), this->rows());
-            for (int i = 0; i < _OtherRows; ++i) {
-                for (int j = 0; j < _OtherCols; ++j) {
-                    matrixT(i,j) = (*this)(j,i);
+            const int cols = this->cols();
+            const int rows = this->rows();
+            Matrix <_OtherScalar,  _OtherRows,  _OtherCols, _OtherStorage> matrixT(cols, rows);
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < cols; ++j) {
+                    matrixT(j,i) = (*this)(i,j);
                 }
 
             }
@@ -256,8 +257,8 @@ namespace gti320
         {
             // TODO calcule et retourne la transposée de la matrice.
             //    Optimisez cette fonction en tenant compte du type de stockage utilisé.
-            int rows = this->rows();
-            int cols = this->cols();
+            const int rows = this->rows();
+            const int cols = this->cols();
             Matrix<_Scalar, _ColsAtCompile, _RowsAtCompile, ColumnStorage> matrixT (cols, rows);
             for (int i = 0; i < rows; ++i) {
                 for (int j = 0; j < cols; ++j) {

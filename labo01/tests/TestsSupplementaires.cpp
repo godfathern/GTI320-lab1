@@ -14,8 +14,15 @@
 #include "DenseStorage.h"
 #include  "Matrix.h"
 #include "Vector.h"
+#include "Operators.h"
 
+#include <chrono>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+#include <iostream>
 
+using namespace gti320;
 // Test operateur de setZero
 TEST(TestsSupplementaires, Supp01)
 {
@@ -42,6 +49,18 @@ TEST(TestsSupplementaires, Supp03)
 {
     gti320::Matrix<double, gti320::Dynamic, gti320::Dynamic, gti320::RowStorage> A(4, 3);
     A.setZero();
+
+    gti320::Matrix<double, gti320::Dynamic, gti320::Dynamic, gti320::ColumnStorage> C(2, 2);
+    C(0,0)= 0;
+    C(0,1)= 1;
+    C(1,0)= 2;
+    C(1,1) = 3;
+
+    gti320::Matrix<double, gti320::Dynamic, gti320::Dynamic, gti320::ColumnStorage> D(2, 2);
+    D = C;
+    EXPECT_EQ(D(1,1), 3);
+
+
 
     for (int i = 0; i < A.rows(); ++i) {
         for (int j = 0; j < A.cols(); ++j) {
@@ -150,4 +169,72 @@ TEST(TestsSupplementaires, Supp09)
 TEST(TestsSupplementaires, Supp10)
 {
 
+}
+
+
+static volatile double g_sink = 0.0;
+
+double checksum(const Matrix<double, Dynamic, Dynamic>& M)
+{
+    double s = 0.0;
+    for (int i = 0; i < M.rows(); ++i) {
+        for (int j = 0; j < M.cols(); ++j) {
+            s += M(i, j);
+        }
+    }
+    return s;
+}
+
+
+TEST(TestsSupplementaires, Supp_Performance_OperatorMul_RowCol_Dynamic)
+{
+
+    const int N = 250;          // taille de matrix
+    const int warmup = 2;       // iterations non mesurees
+    const int runs = 10;        // iterations mesurees
+
+    Matrix<double, Dynamic, Dynamic, RowStorage> A(N, N);
+    Matrix<double, Dynamic, Dynamic, ColumnStorage> B(N, N);
+
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            A(i, j) = 0.001 * (i + 1) + 0.002 * (j + 1);
+            B(i, j) = 0.003 * (i + 1) - 0.001 * (j + 1);
+        }
+    }
+
+    // Warm-up: chauffe caches / pages / JIT
+    for (int t = 0; t < warmup; ++t) {
+        auto C = A * B;
+        g_sink += checksum(C);
+    }
+
+    std::vector<double> times_ms;
+    times_ms.reserve(runs);
+
+    for (int t = 0; t < runs; ++t) {
+        const auto start = std::chrono::steady_clock::now();
+        auto C = A * B;
+        const auto end = std::chrono::steady_clock::now();
+
+        g_sink += checksum(C); // empeche dead-code elimination
+
+        const double ms = std::chrono::duration<double, std::milli>(end - start).count();
+        times_ms.push_back(ms);
+    }
+
+    // Stats: min / mediane / moyenne
+    std::sort(times_ms.begin(), times_ms.end());
+    const double min_ms = times_ms.front();
+    const double med_ms = times_ms[times_ms.size() / 2];
+    const double mean_ms = std::accumulate(times_ms.begin(), times_ms.end(), 0.0) / times_ms.size();
+
+    std::cout << "\n[Perf] operator* RowStorage x ColumnStorage (Dynamic)\n"
+              << "N=" << N << " runs=" << runs << " warmup=" << warmup << "\n"
+              << "min  : " << min_ms  << " ms\n"
+              << "median: " << med_ms << " ms\n"
+              << "mean : " << mean_ms << " ms\n"
+              << "sink : " << g_sink  << "\n";
+
+    SUCCEED();
 }

@@ -3,9 +3,9 @@
  *
  * @brief Tests unitaires 
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : BUIP26109708
+ * Email : phan-tung.bui.1@ens.etsmtl.ca
  *
  */
 
@@ -18,13 +18,13 @@ using namespace gti320;
 
 
 /**
- * Test pour les opérateurs d'arithmétique matricielle.
+ * Test pour les opï¿½rateurs d'arithmï¿½tique matricielle.
  */
 TEST(TestsOperators, MatrixMatrixOperators)
 {
-    // Opérations arithmétiques avec matrices à taille dynamique
+    // Opï¿½rations arithmï¿½tiques avec matrices ï¿½ taille dynamique
     {
-        // Test : matrice identité
+        // Test : matrice identitï¿½
         Matrix<double> A(6, 6);
         A.setIdentity();
         EXPECT_DOUBLE_EQ(A(0, 0), 1.0);
@@ -71,10 +71,10 @@ TEST(TestsOperators, MatrixMatrixOperators)
         EXPECT_DOUBLE_EQ(A_plus_B(2, 3), 0.0);
     }
 
-    // Opérations arithmétique avec matrices à stockage par lignes et par
+    // Opï¿½rations arithmï¿½tique avec matrices ï¿½ stockage par lignes et par
     // colonnes.
     {
-        // Création d'un matrice à stockage par lignes
+        // Crï¿½ation d'un matrice ï¿½ stockage par lignes
         Matrix<double, Dynamic, Dynamic, RowStorage> A(5, 5);
         A(0, 0) = 0.8147;
         A(0, 1) = 0.0975;
@@ -102,11 +102,11 @@ TEST(TestsOperators, MatrixMatrixOperators)
         A(4, 3) = 0.9595;
         A(4, 4) = 0.6787;
 
-        // Test : transposée (le résultat est une matrice à stockage par colonnes)
+        // Test : transposï¿½e (le rï¿½sultat est une matrice ï¿½ stockage par colonnes)
         Matrix<double, Dynamic, Dynamic, ColumnStorage> B = A.transpose();
 
         // Test : multiplication  matrix(ligne) * matrice(colonne)
-        // Note : teste seulement la première et la dernière colonne
+        // Note : teste seulement la premiï¿½re et la derniï¿½re colonne
         const auto C = A * B;
         EXPECT_NEAR(C(0, 0), 1.14815820000000, 1e-3);
         EXPECT_NEAR(C(0, 4), 1.31659795000000, 1e-3);
@@ -121,7 +121,7 @@ TEST(TestsOperators, MatrixMatrixOperators)
 
 
         // Test : multiplication  matrice(colonne) * matrice(ligne)
-        // Note : teste seulement la première et la dernière colonne
+        // Note : teste seulement la premiï¿½re et la derniï¿½re colonne
         const auto C2 = B * A;
         EXPECT_NEAR(C2(0, 0), 2.73456805000000, 1e-3);
         EXPECT_NEAR(C2(0, 4), 1.95669703000000, 1e-3);
@@ -135,7 +135,7 @@ TEST(TestsOperators, MatrixMatrixOperators)
         EXPECT_NEAR(C2(4, 4), 2.48517748000000, 1e-3);
 
         // Test : addition  matrice(ligne) + matrice(ligne)
-        // Note : teste seulement la première et la dernière colonne
+        // Note : teste seulement la premiï¿½re et la derniï¿½re colonne
         const auto A_plus_A = A + A;
         EXPECT_DOUBLE_EQ(A_plus_A(0, 0), A(0, 0) + A(0, 0));
         EXPECT_DOUBLE_EQ(A_plus_A(0, 4), A(0, 4) + A(0, 4));
@@ -149,7 +149,7 @@ TEST(TestsOperators, MatrixMatrixOperators)
         EXPECT_DOUBLE_EQ(A_plus_A(4, 4), A(4, 4) + A(4, 4));
 
         // Test : addition  matrice(colonne) + matrice(colonne)
-        // Note : teste seulement la première et la dernière colonne
+        // Note : teste seulement la premiï¿½re et la derniï¿½re colonne
         const auto B_plus_B = B + B;
         EXPECT_DOUBLE_EQ(B_plus_B(0, 0), B(0, 0) + B(0, 0));
         EXPECT_DOUBLE_EQ(B_plus_B(0, 4), B(0, 4) + B(0, 4));
@@ -169,7 +169,7 @@ TEST(TestsOperators, MatrixMatrixOperators)
  */
 TEST(TestsOperators, MatrixVectorOperators)
 {
-    // Vecteur à taille dynamique
+    // Vecteur ï¿½ taille dynamique
     Vector<double> v(5);
     v(0) = 1.0;
     v(1) = 2.0;
@@ -177,7 +177,7 @@ TEST(TestsOperators, MatrixVectorOperators)
     v(3) = 8.0;
     v(4) = 16.0;
 
-    // Test : multiplication par la matrice identité
+    // Test : multiplication par la matrice identitï¿½
     {
         Matrix<double> M(5, 5);
         M.setIdentity();
@@ -190,7 +190,7 @@ TEST(TestsOperators, MatrixVectorOperators)
         EXPECT_DOUBLE_EQ(b(4), 16.0);
     }
 
-    // Test : multiplication par une matrice à taille dynamique avec stockage par ligne.
+    // Test : multiplication par une matrice ï¿½ taille dynamique avec stockage par ligne.
     {
         Matrix<double, Dynamic, Dynamic, RowStorage> M(5, 5);
         M.setIdentity();
@@ -206,7 +206,7 @@ TEST(TestsOperators, MatrixVectorOperators)
 }
 
 /**
- * Opérateurs d'arithmétique vectorielle
+ * Opï¿½rateurs d'arithmï¿½tique vectorielle
  */
 TEST(TestsOperators, VectorOperators)
 {
