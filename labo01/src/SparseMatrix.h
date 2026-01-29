@@ -3,7 +3,7 @@
 /**
  * @file SparseMatrix.h
  *
- * @brief Une implémentation simple de matrice creuse.
+ * @brief Une implï¿½mentation simple de matrice creuse.
  *        Note:  actuellement, seules les matrices dynamiques
  *        sont possibles.
  *
@@ -30,7 +30,7 @@ namespace gti320
         unsigned int m_rows, m_cols;
     public:
 
-        // Constructeur par défaut
+        // Constructeur par dï¿½faut
         SparseMatrix() : 
             SparseMatrixBase<_Scalar, Dynamic, Dynamic>(),
             m_rows(0), m_cols(0)
@@ -50,11 +50,11 @@ namespace gti320
 
         // Destructeur
         ~SparseMatrix() { }
-
+        // Il faut cette fonction
         // TODO access operator (read-only)
         _Scalar operator()(int i, int j) const
         {
-            // TODO : implémenter
+            // TODO : implï¿½menter
 
             return 0.0;
         }
@@ -66,14 +66,14 @@ namespace gti320
         // Set this matrix to the identity matrix.
         void setIdentity()
         {
-            // TODO mettre toutes les valeurs à 0,0, sauf pour la diagonale qui est à 1,0
-            //      NB : confirmer que la matrice est carrée
+            // TODO mettre toutes les valeurs ï¿½ 0,0, sauf pour la diagonale qui est ï¿½ 1,0
+            //      NB : confirmer que la matrice est carrï¿½e
 
         }
 
         void setFromTriplets(TripletType<_Scalar>* _triplets, unsigned int _size)
         {
-            // TODO : implémenter
+            // TODO : implï¿½menter
         }
 
     };

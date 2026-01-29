@@ -200,12 +200,16 @@ namespace gti320 {
         const _Scalar* __restrict b = B.data();
         _Scalar* __restrict c = C.data();
 
+
         const int n = rowsA * colsA;
         for (int i = 0; i < n; ++i) {
             c[i] = a[i] + b[i];
         }
         return C;
     }
+
+
+
 
     /**
      * Addition : Matrice (ligne) + Matrice (ligne)
@@ -222,15 +226,13 @@ namespace gti320 {
         int cols = A.cols();
 
         assert(rows == B.rows());
-        assert(cols) == B.cols();
+        assert(cols == B.cols());
 
         Matrix<_Scalar, Dynamic, Dynamic, RowStorage> C(rows,cols);
 
         const _Scalar* __restrict a = A.data();
         const _Scalar* __restrict b = B.data();
         _Scalar* __restrict c = C.data();
-
-        for
 
         return Matrix<_Scalar, Dynamic, Dynamic, RowStorage>();
     }
@@ -320,7 +322,7 @@ namespace gti320 {
     
 
     /**
-     * Multiplication : SparseMatrix * Vecteur
+     * Multiplication : SparseMatrix * Vecteur : slide 21 (page 22 du cours 3 a appliquer), eviter de call operator() ici (big-o va augmenter insanely
      */
     template<typename _Scalar, int _Rows, int _Cols>
     Vector<_Scalar, _Rows> operator*(const SparseMatrix<_Scalar, _Cols, _Rows>& A, const Vector<_Scalar, _Cols>& v)

@@ -87,7 +87,7 @@ namespace gti320
         {
             // TODO implementer
             int rows = this->rows();
-            return this->data()[i + j * rows];
+            return this->m_storage[i + j * rows];
         }
 
         /**
