@@ -5,9 +5,9 @@
  *
  * @brief Implémentation de vecteurs simples et denses.
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : BUIP26109708
+ * Email : phan-tung.bui.1@ens.etsmtl.ca
  *
  */
 
@@ -52,7 +52,7 @@ namespace gti320 {
         _Scalar operator()(int i) const
         {
             // TODO implémenter
-            return (_Scalar)i;
+            return this->data()[i];
         }
 
         /**
@@ -61,8 +61,7 @@ namespace gti320 {
         _Scalar& operator()(int i)
         {
             // TODO implémenter
-            _Scalar x = (_Scalar)i;
-            return x;
+            return this->data()[i];
         }
 
         /**
@@ -79,7 +78,17 @@ namespace gti320 {
         inline _Scalar dot(const Vector& other) const
         {
             // TODO implémenter
-            return 0.0;
+            int rows = this->rows();
+            _Scalar result = _Scalar(0);
+
+            assert(rows == other.rows());
+
+            for (int i = 0; i < rows; ++i) {
+                result += this->data()[i] * other.data()[i];
+            }
+
+
+            return result;
         }
 
         /**
@@ -88,7 +97,14 @@ namespace gti320 {
         inline _Scalar norm() const
         {
             // TODO implémenter
-            return 0.0;
+            int rows = this->rows();
+            _Scalar resultCaree = _Scalar(0);
+            for (int i = 0; i < rows; ++i) {
+                _Scalar v = this->data()[i];
+                resultCaree += v * v;
+            }
+
+            return std::sqrt(resultCaree);
         }
     };
 }

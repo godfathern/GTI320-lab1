@@ -3,9 +3,9 @@
  *
  * @brief Tests unitaires 
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : BUIP26109708
+ * Email : phan-tung.bui.1@ens.etsmtl.ca
  *
  */
 
@@ -17,7 +17,7 @@ using namespace gti320;
 
 
 /**
- * Test pour les vecteurs à taille dynamique
+ * Test pour les vecteurs ï¿½ taille dynamique
  */
 TEST(TestLabo, DynamicVectorSizeTest)
 {
