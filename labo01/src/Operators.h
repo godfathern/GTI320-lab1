@@ -5,15 +5,16 @@
  *
  * @brief Opérateurs arithmétiques pour les matrices et les vecteurs.
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : BUIP26109708
+ * Email : phan-tung.bui.1@ens.etsmtl.ca
  *
  */
 
 #include "Matrix.h"
 #include "Vector.h"
 #include "SparseMatrix.h"
+#include <algorithm>
 
  /**
   * Implémentation de divers opérateurs arithmétiques pour les matrices et les vecteurs.
@@ -27,7 +28,40 @@ namespace gti320 {
     Matrix<_Scalar, RowsA, ColsB> operator*(const Matrix<_Scalar, RowsA, ColsA, StorageA>& A, const Matrix<_Scalar, RowsB, ColsB, StorageB>& B)
     {
         // TODO implémenter
-        return Matrix<_Scalar, RowsA, ColsB>();
+
+        int rowsA = A.rows();
+        int colsA = A.cols();
+
+        int rowsB = B.rows();
+        int colsB = B.cols();
+
+        assert(colsA == rowsB);
+
+        Matrix<_Scalar, RowsA, ColsB> matRe(rowsA, colsB);
+
+        for (int i = 0; i < rowsA; ++i) {
+            for (int j = 0; j < colsB; ++j) {
+                _Scalar sum = _Scalar(0);
+                for (int k = 0; k < colsA; ++k) {
+                    sum += A(i, k) * B(k, j);
+                }
+                matRe(i, j) = sum;
+            }
+        }
+
+        //Amelioration possible a tester :
+        // C.setZero();
+        // for (int i = 0; i < rowsA; ++i) {
+        //     for (int k = 0; k < colsA; ++k) {
+        //         const _Scalar a = A(i, k);
+        //         for (int j = 0; j < colsB; ++j) {
+        //             C(i, j) += a * B(k, j);
+        //         }
+        //     }
+        // }
+
+
+        return matRe;
     }
 
     /**
@@ -41,7 +75,26 @@ namespace gti320 {
     Matrix<_Scalar, Dynamic, Dynamic> operator*(const Matrix<_Scalar, Dynamic, Dynamic, ColumnStorage>& A, const Matrix<_Scalar, Dynamic, Dynamic, RowStorage>& B)
     {
         // TODO : implémenter
-        return Matrix<_Scalar, Dynamic, Dynamic>();
+        const int rowsA = A.rows();
+        const int colsA = A.cols();
+        const int rowsB = B.rows();
+        const int colsB = B.cols();
+
+        assert(colsA == rowsB);
+
+        Matrix<_Scalar, Dynamic, Dynamic> C(rowsA, colsB);
+        C.setZero();
+
+        for (int i = 0; i < rowsA; ++i) {
+            for (int k = 0; k < colsA; ++k) {
+                const _Scalar a = A(i, k);
+                for (int j = 0; j < colsB; ++j) {
+                    C(i, j) += a * B(k, j);
+                }
+            }
+        }
+
+        return C;
     }
 
     /**
@@ -55,7 +108,44 @@ namespace gti320 {
     Matrix<_Scalar, Dynamic, Dynamic> operator*(const Matrix<_Scalar, Dynamic, Dynamic, RowStorage>& A, const Matrix<_Scalar, Dynamic, Dynamic, ColumnStorage>& B)
     {
         // TODO : implémenter
-        return Matrix<_Scalar, Dynamic, Dynamic>();
+        const int M = A.rows();
+        const int K = A.cols();
+        const int N = B.cols();
+        assert(K == B.rows());
+
+        Matrix<_Scalar, Dynamic, Dynamic> C(M, N);
+        C.setZero();
+
+        //Pour eviter les functions calls, on get les raw pointers
+        //
+        _Scalar* __restrict__ c = C.data();
+        const _Scalar* __restrict__ a = A.data();
+        const _Scalar* __restrict__ b = B.data();
+
+        const int lda = A.cols();
+        const int ldb = B.rows();
+        const int ldc = C.cols();
+
+        for (int i = 0; i < M; ++i) {
+            _Scalar* cRow = c + i * ldc; // Pin the start address of row i instead of recomputing all time
+            for (int k = 0; k < K; ++k) {
+                const _Scalar aik = a[i * lda + k];
+                const _Scalar* bCol = b + k;
+
+                // manual unroll (x4)
+                int j = 0;
+                for (; j + 3 < N; j += 4) {
+                    cRow[j+0] += aik * bCol[(j+0) * ldb];
+                    cRow[j+1] += aik * bCol[(j+1) * ldb];
+                    cRow[j+2] += aik * bCol[(j+2) * ldb];
+                    cRow[j+3] += aik * bCol[(j+3) * ldb];
+                }
+                for (; j < N; ++j) {
+                    cRow[j] += aik * bCol[j * ldb];
+                }
+            }
+        }
+        return C;
     }
 
 
@@ -66,7 +156,24 @@ namespace gti320 {
     Matrix<_Scalar, Rows, Cols> operator+(const Matrix<_Scalar, Rows, Cols, StorageA>& A, const Matrix<_Scalar, Rows, Cols, StorageB>& B)
     {
         // TODO : implémenter
-        return Matrix<_Scalar, Rows, Cols>();
+        const int rowsA = A.rows();
+        const int colsA = A.cols();
+        const int rowsB = B.rows();
+        const int colsB = B.cols();
+
+        assert (rowsA == rowsB);
+        assert (colsA == colsB);
+
+        Matrix <_Scalar, Rows, Cols> C(rowsA, colsA);
+
+        for (int i = 0; i < rowsA; ++i) {
+            for (int j = 0; j < colsA; ++j) {
+                C(i,j) = A(i,j) + B(i,j);
+            }
+        }
+
+
+        return C;
     }
 
     /**
@@ -79,7 +186,25 @@ namespace gti320 {
     Matrix<_Scalar, Dynamic, Dynamic> operator+(const Matrix<_Scalar, Dynamic, Dynamic, ColumnStorage>& A, const Matrix<_Scalar, Dynamic, Dynamic, ColumnStorage>& B)
     {
         // TODO : implémenter
-        return Matrix<_Scalar, Dynamic, Dynamic>();
+        const int rowsA = A.rows();
+        const int colsA = A.cols();
+        const int rowsB = B.rows();
+        const int colsB = B.cols();
+
+        assert (rowsA == rowsB);
+        assert (colsA == colsB);
+
+        Matrix <_Scalar, Dynamic, Dynamic> C(rowsA, colsA);
+
+        const _Scalar* __restrict a = A.data();
+        const _Scalar* __restrict b = B.data();
+        _Scalar* __restrict c = C.data();
+
+        const int n = rowsA * colsA;
+        for (int i = 0; i < n; ++i) {
+            c[i] = a[i] + b[i];
+        }
+        return C;
     }
 
     /**
@@ -92,6 +217,21 @@ namespace gti320 {
     Matrix<_Scalar, Dynamic, Dynamic, RowStorage> operator+(const Matrix<_Scalar, Dynamic, Dynamic, RowStorage>& A, const Matrix<_Scalar, Dynamic, Dynamic, RowStorage>& B)
     {
         // TODO : implémenter
+
+        int rows = A.rows();
+        int cols = A.cols();
+
+        assert(rows == B.rows());
+        assert(cols) == B.cols();
+
+        Matrix<_Scalar, Dynamic, Dynamic, RowStorage> C(rows,cols);
+
+        const _Scalar* __restrict a = A.data();
+        const _Scalar* __restrict b = B.data();
+        _Scalar* __restrict c = C.data();
+
+        for
+
         return Matrix<_Scalar, Dynamic, Dynamic, RowStorage>();
     }
 
