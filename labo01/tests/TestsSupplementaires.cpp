@@ -13,6 +13,9 @@
 
 #include "DenseStorage.h"
 #include  "Matrix.h"
+#include "Vector.h"
+
+
 // Test operateur de setZero
 TEST(TestsSupplementaires, Supp01)
 {
@@ -84,13 +87,48 @@ TEST(TestsSupplementaires, Supp04)
     }
 }
 
+// Test combinaison de setZero, norm et dot
 TEST(TestsSupplementaires, Supp05)
 {
+    gti320::Vector<double> z(10);
+    z.setZero();
 
+    EXPECT_EQ(z.rows(), 10);
+    EXPECT_DOUBLE_EQ(z.norm(), 0.0);
+
+    gti320::Vector<double> x(10);
+    x.setZero();
+    x(0) = 3.0;
+    x(5) = -4.0;
+
+    EXPECT_DOUBLE_EQ(z.dot(x), 0.0);
+    EXPECT_DOUBLE_EQ(x.dot(z), 0.0);
+
+    const double xx = x.dot(x);
+    const double n = x.norm();
+    EXPECT_NEAR(xx, n * n, 1e-12);
 }
 
+// Test de copie profonde
 TEST(TestsSupplementaires, Supp06)
 {
+    gti320::Vector<double> a(5);
+    a.setZero();
+    a(2) = 7.0;
+
+    gti320::Vector<double> b(5);
+    b.setZero();
+    b = a;
+
+    // Modifier a apres la copie ne doit pas modifier b
+    a(2) = 42.0;
+
+    EXPECT_DOUBLE_EQ(b(2), 7.0);
+    EXPECT_DOUBLE_EQ(a(2), 42.0);
+
+    b(1) = -3.5;
+    EXPECT_DOUBLE_EQ(a(1), 0.0);
+    EXPECT_DOUBLE_EQ(b(1), -3.5);
 
 }
 
