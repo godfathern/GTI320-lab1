@@ -251,17 +251,6 @@ TEST(TestsSparseMatrix, SparseMatrixLastRowEmpty)
     EXPECT_DOUBLE_EQ(out(2), 0.0);
 }
 
-double checksum(const Matrix<double, Dynamic, Dynamic>& M)
-{
-    double s = 0.0;
-    for (int i = 0; i < M.rows(); ++i) {
-        for (int j = 0; j < M.cols(); ++j) {
-            s += M(i, j);
-        }
-    }
-    return s;
-}
-
 // Test perfomance de matrice (RowStorage) * matrice (ColumnStorage) (avec l'affichage de metric)
 TEST(TestsSupplementaires, Test11)
 {
