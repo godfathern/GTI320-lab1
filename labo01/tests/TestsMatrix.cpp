@@ -3,9 +3,9 @@
  *
  * @brief Tests unitaires 
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : phan-tung.bui.1@ens.etsmtl.ca
+ * Email : BUIP26109708
  *
  */
 
