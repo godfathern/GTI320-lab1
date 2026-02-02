@@ -35,11 +35,6 @@ namespace gti320
         // _Scalar* m_data;  // <-- Ceci n'est pas bon, à modifier
         _Scalar m_data[_Size];
 
-    int a = 10;
-    int* pointeur = &a;
-    int cac = * pointeur;
-
-
     public:
 
         /**
@@ -188,8 +183,8 @@ namespace gti320
         /**
          * Constructeur de copie
          */
-        DenseStorage(const DenseStorage& other)
-            : m_data(nullptr)
+        DenseStorage(const DenseStorage& other) :
+            m_data(nullptr)
             , m_size(other.m_size)
         {
             // TODO allouer un tampon pour stocker _size éléments de type _Scalar.
@@ -251,6 +246,7 @@ namespace gti320
             m_size = _size;
             if (m_size > 0) {
                 m_data = new _Scalar[m_size];
+                setZero();
             }
             else {
                 m_data = nullptr;

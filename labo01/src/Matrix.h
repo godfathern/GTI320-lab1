@@ -98,7 +98,7 @@ namespace gti320
             // TODO implementer
             //      Indice : l'implémentation est identique à celle de la fonction précédente.
             int rows = this->rows();
-            return this->data()[i + j * rows];
+            return this->m_storage[i + j * rows];
         }
 
         /**
@@ -221,7 +221,7 @@ namespace gti320
         {
             // TODO implementer
             int cols = this->cols();
-            return this->data()[i*cols + j];
+            return this->m_storage[i*cols + j];
         }
 
         /**
@@ -231,7 +231,7 @@ namespace gti320
         {
             // TODO implementer
             int cols = this->cols();
-            return this->data()[i*cols + j];
+            return this->m_storage[i*cols + j];
         }
 
         /**
