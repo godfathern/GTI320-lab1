@@ -250,3 +250,64 @@ TEST(TestsSparseMatrix, SparseMatrixLastRowEmpty)
     EXPECT_DOUBLE_EQ(out(1), 4.0);
     EXPECT_DOUBLE_EQ(out(2), 0.0);
 }
+
+double checksum(const Matrix<double, Dynamic, Dynamic>& M)
+{
+    double s = 0.0;
+    for (int i = 0; i < M.rows(); ++i) {
+        for (int j = 0; j < M.cols(); ++j) {
+            s += M(i, j);
+        }
+    }
+    return s;
+}
+
+// Test perfomance de matrice (RowStorage) * matrice (ColumnStorage) (avec l'affichage de metric)
+TEST(TestsSupplementaires, Test11)
+{
+
+    const int N = 250;          // taille de matrix
+    const int warmup = 2;       // iterations non mesurees
+    const int runs = 10;        // iterations mesurees
+
+    Matrix<double, Dynamic, Dynamic, RowStorage> A(N, N);
+    Matrix<double, Dynamic, Dynamic, ColumnStorage> B(N, N);
+
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            A(i, j) = 0.001 * (i + 1) + 0.002 * (j + 1);
+            B(i, j) = 0.003 * (i + 1) - 0.001 * (j + 1);
+        }
+    }
+
+    // Warm-up: chauffe caches / pages / JIT
+    for (int t = 0; t < warmup; ++t) {
+        auto C = A * B;
+    }
+
+    std::vector<double> times_ms;
+    times_ms.reserve(runs);
+
+    for (int t = 0; t < runs; ++t) {
+        const auto start = std::chrono::steady_clock::now();
+        auto C = A * B;
+        const auto end = std::chrono::steady_clock::now();
+
+        const double ms = std::chrono::duration<double, std::milli>(end - start).count();
+        times_ms.push_back(ms);
+    }
+
+    // Metric: min / mediane / moyenne
+    std::sort(times_ms.begin(), times_ms.end());
+    const double min_ms = times_ms.front();
+    const double med_ms = times_ms[times_ms.size() / 2];
+    const double mean_ms = std::accumulate(times_ms.begin(), times_ms.end(), 0.0) / times_ms.size();
+
+    std::cout << "\n[Perf] operator* RowStorage x ColumnStorage (Dynamic)\n"
+              << "N=" << N << " runs=" << runs << " warmup=" << warmup << "\n"
+              << "min  : " << min_ms  << " ms\n"
+              << "median: " << med_ms << " ms\n"
+              << "mean : " << mean_ms << "\n";
+
+    SUCCEED();
+}
