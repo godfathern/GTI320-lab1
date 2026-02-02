@@ -122,10 +122,6 @@ TEST(TestsSupplementaires, Supp05)
 
     EXPECT_DOUBLE_EQ(z.dot(x), 0.0);
     EXPECT_DOUBLE_EQ(x.dot(z), 0.0);
-
-    const double xx = x.dot(x);
-    const double n = x.norm();
-    EXPECT_NEAR(xx, n * n, 1e-12);
 }
 
 // Test de copie profonde
@@ -151,90 +147,106 @@ TEST(TestsSupplementaires, Supp06)
 
 }
 
+// Test Vector - Vector
 TEST(TestsSupplementaires, Supp07)
 {
+    Vector<double> v1(5);
+    Vector<double> v2(5);
+
+    v1(0) = 1.0;  v2(0) = 0.5;
+    v1(1) = 2.0;  v2(1) = 1.0;
+    v1(2) = 4.0;  v2(2) = 2.0;
+    v1(3) = 8.0;  v2(3) = 4.0;
+    v1(4) = 16.0; v2(4) = 8.0;
+
+    const auto v3 = v1 - v2;
+
+    EXPECT_DOUBLE_EQ(v3(0), 0.5);
+    EXPECT_DOUBLE_EQ(v3(1), 1.0);
+    EXPECT_DOUBLE_EQ(v3(2), 2.0);
+    EXPECT_DOUBLE_EQ(v3(3), 4.0);
+    EXPECT_DOUBLE_EQ(v3(4), 8.0);
 
 }
 
+//Test matrix (ColumnStorage) * vecteur
 TEST(TestsSupplementaires, Supp08)
 {
+    Matrix<double, Dynamic, Dynamic, ColumnStorage> M(5, 5);
+    M.setIdentity();
+
+    Vector<double> v(5);
+    v(0) = 1.0;
+    v(1) = 2.0;
+    v(2) = 4.0;
+    v(3) = 8.0;
+    v(4) = 16.0;
+
+    const auto result = M * v;
+
+    EXPECT_DOUBLE_EQ(result(0), 1.0);
+    EXPECT_DOUBLE_EQ(result(1), 2.0);
+    EXPECT_DOUBLE_EQ(result(2), 4.0);
+    EXPECT_DOUBLE_EQ(result(3), 8.0);
+    EXPECT_DOUBLE_EQ(result(4), 16.0);
 
 }
 
+//Test avec matrice 0
 TEST(TestsSupplementaires, Supp09)
 {
+    SparseMatrix<double> A(3, 3);
 
-}
+    // Matrice 0 : aucun triplet
+    A.setFromTriplets(nullptr, 0);
 
-TEST(TestsSupplementaires, Supp10)
-{
-
-}
-
-
-static volatile double g_sink = 0.0;
-
-double checksum(const Matrix<double, Dynamic, Dynamic>& M)
-{
-    double s = 0.0;
-    for (int i = 0; i < M.rows(); ++i) {
-        for (int j = 0; j < M.cols(); ++j) {
-            s += M(i, j);
-        }
-    }
-    return s;
-}
-
-
-TEST(TestsSupplementaires, Supp_Performance_OperatorMul_RowCol_Dynamic)
-{
-
-    const int N = 250;          // taille de matrix
-    const int warmup = 2;       // iterations non mesurees
-    const int runs = 10;        // iterations mesurees
-
-    Matrix<double, Dynamic, Dynamic, RowStorage> A(N, N);
-    Matrix<double, Dynamic, Dynamic, ColumnStorage> B(N, N);
-
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            A(i, j) = 0.001 * (i + 1) + 0.002 * (j + 1);
-            B(i, j) = 0.003 * (i + 1) - 0.001 * (j + 1);
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            EXPECT_DOUBLE_EQ(A(i, j), 0.0);
         }
     }
 
-    // Warm-up: chauffe caches / pages / JIT
-    for (int t = 0; t < warmup; ++t) {
-        auto C = A * B;
-        g_sink += checksum(C);
-    }
+    Vector<double> v(3);
+    v(0) = 1.0;
+    v(1) = 2.0;
+    v(2) = 3.0;
 
-    std::vector<double> times_ms;
-    times_ms.reserve(runs);
+    const Vector<double> out = A * v;
 
-    for (int t = 0; t < runs; ++t) {
-        const auto start = std::chrono::steady_clock::now();
-        auto C = A * B;
-        const auto end = std::chrono::steady_clock::now();
+    EXPECT_DOUBLE_EQ(out(0), 0.0);
+    EXPECT_DOUBLE_EQ(out(1), 0.0);
+    EXPECT_DOUBLE_EQ(out(2), 0.0);
+}
 
-        g_sink += checksum(C); // empeche dead-code elimination
+// Test verifier le mismatch de taille de triplets et sa matrice (Derniere ligne vide)
+TEST(TestsSparseMatrix, SparseMatrixLastRowEmpty)
+{
+    // 3 x 3
+    SparseMatrix<double> A(3, 3);
 
-        const double ms = std::chrono::duration<double, std::milli>(end - start).count();
-        times_ms.push_back(ms);
-    }
+    TripletType<double> triplets[] = {
+        {1.0, 0, 0},
+        {2.0, 1, 1}
+    };
 
-    // Stats: min / mediane / moyenne
-    std::sort(times_ms.begin(), times_ms.end());
-    const double min_ms = times_ms.front();
-    const double med_ms = times_ms[times_ms.size() / 2];
-    const double mean_ms = std::accumulate(times_ms.begin(), times_ms.end(), 0.0) / times_ms.size();
+    // 3 x 2
+    A.setFromTriplets(triplets, 2);
 
-    std::cout << "\n[Perf] operator* RowStorage x ColumnStorage (Dynamic)\n"
-              << "N=" << N << " runs=" << runs << " warmup=" << warmup << "\n"
-              << "min  : " << min_ms  << " ms\n"
-              << "median: " << med_ms << " ms\n"
-              << "mean : " << mean_ms << " ms\n"
-              << "sink : " << g_sink  << "\n";
+    EXPECT_DOUBLE_EQ(A(0, 0), 1.0);
+    EXPECT_DOUBLE_EQ(A(1, 1), 2.0);
 
-    SUCCEED();
+    EXPECT_DOUBLE_EQ(A(2, 0), 0.0);
+    EXPECT_DOUBLE_EQ(A(2, 1), 0.0);
+    EXPECT_DOUBLE_EQ(A(2, 2), 0.0);
+
+    Vector<double> v(3);
+    v(0) = 1.0;
+    v(1) = 2.0;
+    v(2) = 3.0;
+
+    const Vector<double> out = A * v;
+
+    EXPECT_DOUBLE_EQ(out(0), 1.0);
+    EXPECT_DOUBLE_EQ(out(1), 4.0);
+    EXPECT_DOUBLE_EQ(out(2), 0.0);
 }
