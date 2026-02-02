@@ -3,11 +3,13 @@
  *
  * @brief Tests unitaires 
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : BUIP26109708
+ * Email : phan-tung.bui.1@ens.etsmtl.ca
  *
  */
+
+#include <regex>
 
 #include "SparseMatrix.h"
 #include "Vector.h"
@@ -42,7 +44,7 @@ TEST(TestsSparseMatrix, SparseMatrix)
         EXPECT_DOUBLE_EQ(a21, 2.5);
     }
 
-    // Test : SparseMatrix * Vector dense 
+    // Test : SparseMatrix * Vector dense
     {
         const Vector<double> vout = A * v;
 

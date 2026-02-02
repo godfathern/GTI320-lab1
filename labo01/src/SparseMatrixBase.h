@@ -5,9 +5,9 @@
  *
  * @brief Classe de base pour les matrices creuses.
  *
- * Nom:
- * Code permanent :
- * Email :
+ * Nom: Phan Tung Bui
+ * Code permanent : BUIP26109708
+ * Email : phan-tung.bui.1@ens.etsmtl.ca
  *
  */
 
@@ -23,7 +23,7 @@ namespace gti320
     protected:
         DenseStorage<_ScalarType, _InnerSize> m_vals;       // Stocke les coefficients de valeur non zéro
         DenseStorage<unsigned int, _InnerSize> m_inner;     // Stocke les indices de colonne des coefficients non zéro
-        DenseStorage<unsigned int, _OuterSize> m_start;     // Stocke pour chaque ligne l'index du premier élément non zéro dans m_vals et m_inner
+        DenseStorage<unsigned int, _OuterSize> m_start;     // Stocke pour chaque ligne l'array index du premier élément non zéro dans m_vals et m_inner
 
     public:
 
@@ -36,7 +36,12 @@ namespace gti320
         // Parameter constructor
         SparseMatrixBase(int _outerSize, unsigned int _innerSize)
         {
-            // TODO : implémenter 
+            // TODO : implémenter
+            m_inner.resize(_innerSize);
+            m_vals.resize((_innerSize));
+            m_start.resize(_outerSize);
+            m_start.setZero();
+
 
         }
 
@@ -58,6 +63,8 @@ namespace gti320
         void setInnerSize(unsigned int _nnz)
         {
             // TODO : implémenter
+            m_inner.resize(_nnz);
+            m_vals.resize(_nnz);
         }
 
         // Number of elements
@@ -69,6 +76,7 @@ namespace gti320
         void setOuterSize(unsigned int _outerSize) 
         { 
             // TODO : implémenter
+            m_start.resize(_outerSize);
         }
 
         unsigned int getOuterSize() const
@@ -79,6 +87,9 @@ namespace gti320
         inline void setZero()
         {
             // TODO : implémenter
+            m_inner.setZero();
+            m_start.setZero();
+            m_vals.setZero();
         }
 
         // Access to the @a m_vals buffer (read only)
